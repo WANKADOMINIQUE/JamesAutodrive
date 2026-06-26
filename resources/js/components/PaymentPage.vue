@@ -74,15 +74,15 @@
           <Transition name="hfade" mode="out-in">
             <div :key="activeSlide" class="hero__text">
               <p class="hero__badge">🚗 Secure Online Payment Portal</p>
-              <h1 class="hero__title">SECURE<br/><span class="hero__title--blue">PAYMENT</span><br/>GATEWAY</h1>
+              <h1 class="hero__title">JAMES<br/><span class="hero__title--blue">AUTO</span><br/>DRIVE</h1>
               <p class="hero__subtitle">Finance Available &nbsp;•&nbsp; Nationwide Delivery</p>
-              <p class="hero__desc">Pay for your vehicle safely and securely online. All major cards and cryptocurrency accepted.</p>
+              <p class="hero__desc">Pay for your vehicle safely and securely online. All major cards and bank transfers accepted.</p>
               <div class="hero__btns">
                 <button class="btn btn--blue" @click="startPayment('card')">
                   <span class="btn__ico">💳</span> Pay by Card
                 </button>
-                <button class="btn btn--outline" @click="startPayment('crypto')">
-                  <span class="btn__ico">₿</span> Pay with Crypto
+                <button class="btn btn--outline" @click="startPayment('bank')">
+                  <span class="btn__ico">🏦</span> Bank Transfer
                 </button>
               </div>
             </div>
@@ -132,7 +132,7 @@
             <span class="feat__ico">🔒</span>
             <div>
               <p class="feat__title">Secure Payments</p>
-              <p class="feat__sub">Card &amp; Crypto Accepted</p>
+              <p class="feat__sub">Card &amp; Bank Transfer</p>
             </div>
           </div>
         </div>
@@ -180,21 +180,24 @@
               </div>
             </div>
 
-            <!-- Crypto -->
-            <div class="pay-card" @click="startPayment('crypto')">
-              <div class="pay-card__img-wrap">
-                <img src="/images/pay-crypto.jpg" alt="Pay with Crypto" class="pay-card__img" />
+            <!-- Bank Transfer -->
+            <div class="pay-card" @click="startPayment('bank')">
+              <div class="pay-card__img-wrap pay-card__img-wrap--bank">
+                <div class="bank-card-cover">
+                  <span class="bank-card-cover__icon">🏦</span>
+                  <span class="bank-card-cover__text">BANK TRANSFER</span>
+                </div>
               </div>
               <div class="pay-card__body">
-                <h3 class="pay-card__title">PAY WITH CRYPTOCURRENCY</h3>
-                <p class="pay-card__sub">Fast, secure and global payments</p>
+                <h3 class="pay-card__title">PAY BY BANK TRANSFER</h3>
+                <p class="pay-card__sub">Direct bank transfer – UK &amp; Ireland</p>
                 <div class="pay-card__brands">
-                  <span class="brand brand--btc">BTC</span>
-                  <span class="brand brand--eth">ETH</span>
-                  <span class="brand brand--ltc">LTC</span>
-                  <span class="brand brand--usdt">USDT</span>
+                  <span class="brand brand--uk">🇬🇧 UK</span>
+                  <span class="brand brand--ie">🇮🇪 IE</span>
+                  <span class="brand brand--iban">IBAN</span>
+                  <span class="brand brand--swift">SWIFT</span>
                 </div>
-                <button class="btn btn--blue btn--full">PAY WITH CRYPTO</button>
+                <button class="btn btn--blue btn--full">PAY BY BANK TRANSFER</button>
               </div>
             </div>
           </div>
@@ -235,7 +238,7 @@
               <li>✔ Affordable Prices &amp; Great Value</li>
               <li>✔ Nationwide Delivery Across Ireland</li>
               <li>✔ Flexible Finance Options</li>
-              <li>✔ Secure Payments – Card &amp; Crypto</li>
+              <li>✔ Secure Payments – Card &amp; Bank Transfer</li>
               <li>✔ Excellent Customer Support</li>
             </ul>
           </div>
@@ -307,7 +310,7 @@
             <a href="#" class="footer__link">Finance Options</a>
             <a href="#" class="footer__link">Nationwide Delivery</a>
             <a href="#" class="footer__link">Card Payments</a>
-            <a href="#" class="footer__link">Crypto Payments</a>
+            <a href="#" class="footer__link">Bank Transfer</a>
           </div>
           <div class="footer__col">
             <h4 class="footer__heading">CONTACT INFO</h4>
@@ -492,9 +495,9 @@
     </template>
 
     <!-- ═══════════════════════════════
-         CRYPTO PAYMENT FORM
+         BANK TRANSFER PAYMENT FORM
     ═══════════════════════════════ -->
-    <template v-else-if="view === 'crypto'">
+    <template v-else-if="view === 'bank'">
 
       <header class="form-header">
         <div class="wrap form-header__inner">
@@ -512,80 +515,356 @@
 
       <div class="form-notice">
         <div class="wrap form-notice__inner">
-          <span>💾</span>
-          <span>Your contact details will be <strong>saved securely</strong> for a faster checkout next time.</span>
+          <span>🏦</span>
+          <span>Use the bank details below to send your payment. <strong>Submit your details</strong> after making the transfer so our team can confirm.</span>
         </div>
       </div>
 
-      <div class="crypto-hero">
-        <img src="/images/pay-crypto.jpg" alt="Crypto Payment" class="crypto-hero__img" />
-        <div class="crypto-hero__overlay">
-          <div class="wrap">
-            <p class="crypto-hero__symbol">₿</p>
-            <h2 class="crypto-hero__title">CRYPTOCURRENCY PAYMENT</h2>
-            <p class="crypto-hero__sub">Fast · Secure · Global</p>
+      <div class="bank-hero">
+        <div class="wrap bank-hero__inner">
+          <span class="bank-hero__icon">🏦</span>
+          <div>
+            <h2 class="bank-hero__title">BANK TRANSFER PAYMENT</h2>
+            <p class="bank-hero__sub">Secure · Direct · UK &amp; Ireland</p>
           </div>
         </div>
       </div>
 
       <div class="wrap form-wrap">
-        <div class="crypto-coins">
-          <div class="crypto-coin">₿<br/><span>Bitcoin</span></div>
-          <div class="crypto-coin">Ξ<br/><span>Ethereum</span></div>
-          <div class="crypto-coin">Ł<br/><span>Litecoin</span></div>
-          <div class="crypto-coin">₮<br/><span>Tether</span></div>
+
+        <div class="amount-pill">
+          <span class="amount-pill__label">Total Payment Amount</span>
+          <span class="amount-pill__value">£{{ amountDisplay }}</span>
         </div>
 
         <form @submit.prevent="handleSubmit" novalidate>
 
-          <div class="form-section-title">Your Details</div>
+          <div class="form-section-title">Bank Transfer Details</div>
+          <div class="bank-details-heading">Select your country to view bank details and fill in your information:</div>
 
-          <div class="fgroup" :class="{ error: errors.full_name }">
-            <label>Full Name</label>
-            <div class="finput-wrap">
-              <span class="finput-ico">👤</span>
-              <input v-model="form.full_name" type="text" placeholder="John Smith" autocomplete="name" />
-            </div>
-            <p v-if="errors.full_name" class="ferr">{{ errors.full_name[0] }}</p>
+          <!-- Country Selector -->
+          <div class="bank-country-tabs">
+            <button type="button" class="bank-country-btn"
+              :class="{ 'bank-country-btn--active': selectedBank === 'uk', 'bank-country-btn--uk': selectedBank === 'uk' }"
+              @click="selectedBank = 'uk'">
+              <svg class="bank-flag-svg" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                <rect width="60" height="30" fill="#012169"/>
+                <path stroke="white" stroke-width="6" d="M0,0L60,30M60,0L0,30"/>
+                <path stroke="#C8102E" stroke-width="4" d="M0,0L60,30M60,0L0,30"/>
+                <path stroke="white" stroke-width="10" d="M30,0V30M0,15H60"/>
+                <path stroke="#C8102E" stroke-width="6" d="M30,0V30M0,15H60"/>
+              </svg>
+              <span class="bank-country-btn__label">United Kingdom</span>
+              <span class="bank-country-btn__sub">Sort Code &amp; Account No.</span>
+            </button>
+            <button type="button" class="bank-country-btn"
+              :class="{ 'bank-country-btn--active': selectedBank === 'ie', 'bank-country-btn--ie': selectedBank === 'ie' }"
+              @click="selectedBank = 'ie'">
+              <svg class="bank-flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                <rect width="1" height="2" fill="#169b62"/>
+                <rect x="1" width="1" height="2" fill="#fff"/>
+                <rect x="2" width="1" height="2" fill="#ff883e"/>
+              </svg>
+              <span class="bank-country-btn__label">Ireland</span>
+              <span class="bank-country-btn__sub">IBAN &amp; BIC / SWIFT</span>
+            </button>
           </div>
 
-          <div class="fgroup" :class="{ error: errors.email }">
-            <label>Email Address</label>
-            <div class="finput-wrap">
-              <span class="finput-ico">✉️</span>
-              <input v-model="form.email" type="email" placeholder="john@example.com" />
-            </div>
-            <p v-if="errors.email" class="ferr">{{ errors.email[0] }}</p>
+          <!-- No country selected yet -->
+          <div v-if="!selectedBank" class="bank-no-selection">
+            <span>🏦</span>
+            <p>Select a country above to view the bank details and complete your payment information.</p>
           </div>
 
-          <div class="fgroup" :class="{ error: errors.phone }">
-            <label>Phone Number</label>
-            <div class="finput-wrap">
-              <span class="finput-ico">📞</span>
-              <input v-model="form.phone" type="tel" placeholder="+353 / +44 …" />
+          <!-- ── UK Combined Card ── -->
+          <Transition name="bank-slide">
+            <div v-if="selectedBank === 'uk'" class="bank-details-card bank-details-card--uk">
+
+              <!-- Bank info header -->
+              <div class="bank-details-card__header">
+                <span class="bank-details-card__flag">🇬🇧</span>
+                <h3 class="bank-details-card__title">UK BANK DETAILS</h3>
+              </div>
+
+              <!-- Recipient bank rows (read-only) -->
+              <div class="bank-details-card__body">
+                <div class="bank-row">
+                  <span class="bank-icon">👤</span>
+                  <span class="bank-key">Account Holder Name</span>
+                  <span class="bank-val">James AutoDrive</span>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">🏦</span>
+                  <span class="bank-key">Bank Name</span>
+                  <span class="bank-val">Barclays Bank</span>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">↔</span>
+                  <span class="bank-key">Sort Code</span>
+                  <div class="bank-val-wrap">
+                    <span class="bank-val">20-45-67</span>
+                    <span class="bank-hint">6 digits, e.g. 20-45-67</span>
+                  </div>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">💳</span>
+                  <span class="bank-key">Account Number</span>
+                  <div class="bank-val-wrap">
+                    <span class="bank-val">12345678</span>
+                    <span class="bank-hint">8 digits</span>
+                  </div>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">🌐</span>
+                  <span class="bank-key">IBAN</span>
+                  <div class="bank-val-wrap">
+                    <span class="bank-val bank-val--mono">GB29 BARC 2004 5612 3456 78</span>
+                    <span class="bank-hint">International Bank Account Number</span>
+                  </div>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">🌐</span>
+                  <span class="bank-key">SWIFT / BIC</span>
+                  <div class="bank-val-wrap">
+                    <span class="bank-val bank-val--mono">BARCGB22</span>
+                    <span class="bank-hint">Bank Identifier Code</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Client details (editable) -->
+              <div class="bank-client-divider">Your Details (Sender)</div>
+              <div class="bank-client-fields">
+                <div class="fgroup" :class="{ error: errors.full_name }">
+                  <label>Full Name</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">👤</span>
+                    <input v-model="form.full_name" type="text" placeholder="John Smith" autocomplete="name" />
+                  </div>
+                  <p v-if="errors.full_name" class="ferr">{{ errors.full_name[0] }}</p>
+                </div>
+                <div class="fgroup" :class="{ error: errors.email }">
+                  <label>Email Address</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">✉️</span>
+                    <input v-model="form.email" type="email" placeholder="john@example.com" autocomplete="email" />
+                  </div>
+                  <p v-if="errors.email" class="ferr">{{ errors.email[0] }}</p>
+                </div>
+                <div class="fgroup" :class="{ error: errors.phone }">
+                  <label>Phone Number</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">📞</span>
+                    <input v-model="form.phone" type="tel" placeholder="+353 / +44 …" autocomplete="tel" />
+                  </div>
+                  <p v-if="errors.phone" class="ferr">{{ errors.phone[0] }}</p>
+                </div>
+                <div class="fgroup" :class="{ error: errors.amount }">
+                  <label>Payment Amount (£)</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">💷</span>
+                    <input v-model="form.amount" type="number" placeholder="0.00" min="1" step="0.01" />
+                  </div>
+                  <p v-if="errors.amount" class="ferr">{{ errors.amount[0] }}</p>
+                </div>
+                <div class="fgroup">
+                  <label>Car / Order Reference <span class="optional">(optional)</span></label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🚗</span>
+                    <input v-model="form.reference" type="text" placeholder="e.g. Toyota Corolla – REF#001" />
+                  </div>
+                </div>
+                <div class="fgroup">
+                  <label>Your Bank Name</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🏦</span>
+                    <input v-model="form.sender_bank_name" type="text" placeholder="e.g. Barclays Bank" />
+                  </div>
+                </div>
+                <div class="fgroup">
+                  <label>Sort Code</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">↔</span>
+                    <input v-model="form.sender_sort_code" type="text" placeholder="20-45-67" maxlength="8" />
+                  </div>
+                  <p class="fhint">6 digits, e.g. 20-45-67</p>
+                </div>
+                <div class="fgroup">
+                  <label>Account Number</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">💳</span>
+                    <input v-model="form.sender_account_number" type="text" placeholder="12345678" maxlength="8" inputmode="numeric" />
+                  </div>
+                  <p class="fhint">8 digits</p>
+                </div>
+                <div class="fgroup">
+                  <label>IBAN</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🌐</span>
+                    <input v-model="form.sender_iban" type="text" placeholder="GB29 BARC 2004 5612 3456 78" />
+                  </div>
+                  <p class="fhint">International Bank Account Number</p>
+                </div>
+                <div class="fgroup">
+                  <label>SWIFT / BIC</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🌐</span>
+                    <input v-model="form.sender_swift_bic" type="text" placeholder="e.g. BARCGB22" />
+                  </div>
+                  <p class="fhint">Bank Identifier Code</p>
+                </div>
+              </div>
+
+              <div class="bank-details-card__note bank-details-card__note--blue">
+                ℹ You may need to provide IBAN for international transfers. Ask your bank if you are not sure.
+              </div>
             </div>
-            <p v-if="errors.phone" class="ferr">{{ errors.phone[0] }}</p>
+          </Transition>
+
+          <!-- ── Ireland Combined Card ── -->
+          <Transition name="bank-slide">
+            <div v-if="selectedBank === 'ie'" class="bank-details-card bank-details-card--ie">
+
+              <!-- Bank info header -->
+              <div class="bank-details-card__header">
+                <span class="bank-details-card__flag">🇮🇪</span>
+                <h3 class="bank-details-card__title">IRELAND BANK DETAILS</h3>
+              </div>
+
+              <!-- Recipient bank rows (read-only) -->
+              <div class="bank-details-card__body">
+                <div class="bank-row">
+                  <span class="bank-icon">👤</span>
+                  <span class="bank-key">Account Holder Name</span>
+                  <span class="bank-val">James AutoDrive</span>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">🏦</span>
+                  <span class="bank-key">Bank Name</span>
+                  <span class="bank-val">Bank of Ireland</span>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">🌐</span>
+                  <span class="bank-key">IBAN</span>
+                  <div class="bank-val-wrap">
+                    <span class="bank-val bank-val--mono">IE29 BOFI 9012 3456 7890 12</span>
+                    <span class="bank-hint">International Bank Account Number</span>
+                  </div>
+                </div>
+                <div class="bank-row">
+                  <span class="bank-icon">🌐</span>
+                  <span class="bank-key">BIC / SWIFT</span>
+                  <div class="bank-val-wrap">
+                    <span class="bank-val bank-val--mono">BOFIIE2D</span>
+                    <span class="bank-hint">Bank Identifier Code</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Client details (editable) -->
+              <div class="bank-client-divider">Your Details (Sender)</div>
+              <div class="bank-client-fields">
+                <div class="fgroup" :class="{ error: errors.full_name }">
+                  <label>Full Name</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">👤</span>
+                    <input v-model="form.full_name" type="text" placeholder="John Smith" autocomplete="name" />
+                  </div>
+                  <p v-if="errors.full_name" class="ferr">{{ errors.full_name[0] }}</p>
+                </div>
+                <div class="fgroup" :class="{ error: errors.email }">
+                  <label>Email Address</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">✉️</span>
+                    <input v-model="form.email" type="email" placeholder="john@example.com" autocomplete="email" />
+                  </div>
+                  <p v-if="errors.email" class="ferr">{{ errors.email[0] }}</p>
+                </div>
+                <div class="fgroup" :class="{ error: errors.phone }">
+                  <label>Phone Number</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">📞</span>
+                    <input v-model="form.phone" type="tel" placeholder="+353 / +44 …" autocomplete="tel" />
+                  </div>
+                  <p v-if="errors.phone" class="ferr">{{ errors.phone[0] }}</p>
+                </div>
+                <div class="fgroup" :class="{ error: errors.amount }">
+                  <label>Payment Amount (£)</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">💷</span>
+                    <input v-model="form.amount" type="number" placeholder="0.00" min="1" step="0.01" />
+                  </div>
+                  <p v-if="errors.amount" class="ferr">{{ errors.amount[0] }}</p>
+                </div>
+                <div class="fgroup">
+                  <label>Car / Order Reference <span class="optional">(optional)</span></label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🚗</span>
+                    <input v-model="form.reference" type="text" placeholder="e.g. Toyota Corolla – REF#001" />
+                  </div>
+                </div>
+                <div class="fgroup">
+                  <label>Your Bank Name</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🏦</span>
+                    <input v-model="form.sender_bank_name" type="text" placeholder="e.g. Bank of Ireland" />
+                  </div>
+                </div>
+                <div class="fgroup">
+                  <label>Sort Code <span class="optional">(if applicable)</span></label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">↔</span>
+                    <input v-model="form.sender_sort_code" type="text" placeholder="XX-XX-XX" maxlength="8" />
+                  </div>
+                  <p class="fhint">6 digits, e.g. 20-45-67</p>
+                </div>
+                <div class="fgroup">
+                  <label>Account Number <span class="optional">(if applicable)</span></label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">💳</span>
+                    <input v-model="form.sender_account_number" type="text" placeholder="12345678" maxlength="8" inputmode="numeric" />
+                  </div>
+                  <p class="fhint">8 digits</p>
+                </div>
+                <div class="fgroup">
+                  <label>IBAN</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🌐</span>
+                    <input v-model="form.sender_iban" type="text" placeholder="IE29 BOFI 9012 3456 7890 12" />
+                  </div>
+                  <p class="fhint">International Bank Account Number</p>
+                </div>
+                <div class="fgroup">
+                  <label>BIC / SWIFT</label>
+                  <div class="finput-wrap">
+                    <span class="finput-ico">🌐</span>
+                    <input v-model="form.sender_swift_bic" type="text" placeholder="e.g. BOFIIE2D" />
+                  </div>
+                  <p class="fhint">Bank Identifier Code</p>
+                </div>
+              </div>
+
+              <div class="bank-details-card__note bank-details-card__note--green">
+                ℹ In Ireland, IBAN and BIC/SWIFT are usually required for international transfers.
+              </div>
+            </div>
+          </Transition>
+
+          <!-- Important note -->
+          <div class="bank-important">
+            <span class="bank-important__ico">🔒</span>
+            <div>
+              <p class="bank-important__title">Important</p>
+              <ul class="bank-important__list">
+                <li>Enter your bank details exactly as they appear on your bank statement or in your online banking.</li>
+                <li>Use your order reference number as the payment description/reference.</li>
+                <li>If paying by debit/credit card, use the <strong>Pay by Card</strong> option instead.</li>
+              </ul>
+            </div>
           </div>
 
-          <div class="fgroup" :class="{ error: errors.amount }">
-            <label>Amount (£)</label>
-            <div class="finput-wrap">
-              <span class="finput-ico">💷</span>
-              <input v-model="form.amount" type="number" placeholder="0.00" min="1" step="0.01" />
-            </div>
-            <p v-if="errors.amount" class="ferr">{{ errors.amount[0] }}</p>
-          </div>
-
-          <div class="fgroup">
-            <label>Order Reference <span class="optional">(optional)</span></label>
-            <div class="finput-wrap">
-              <span class="finput-ico">🚗</span>
-              <input v-model="form.reference" type="text" placeholder="e.g. Audi RS3 – REF#002" />
-            </div>
-          </div>
-
-          <div class="crypto-note">
-            📧 After submitting, our team will contact you via WhatsApp or email with the crypto wallet address and payment instructions within 30 minutes.
+          <div class="bank-transfer-note">
+            📧 After making your bank transfer, submit this form and our team will confirm receipt via email or WhatsApp within 30 minutes.
           </div>
 
           <label class="save-toggle">
@@ -594,9 +873,10 @@
           </label>
 
           <button type="submit" class="btn btn--blue btn--pay" :disabled="loading">
-            <span v-if="!loading">Submit Crypto Request →</span>
+            <span v-if="!loading">🏦 &nbsp;Confirm Bank Transfer →</span>
             <span v-else class="spinner"></span>
           </button>
+
         </form>
       </div>
 
@@ -663,9 +943,10 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import CardPreview from './CardPreview.vue'
 
-const view     = ref('landing')
-const menuOpen = ref(false)
-const scrolled = ref(false)
+const view        = ref('landing')
+const menuOpen    = ref(false)
+const scrolled    = ref(false)
+const selectedBank = ref(null)
 
 // Carousel
 const heroImgs   = ['/images/hero-1.jpg', '/images/hero-2.jpg', '/images/logo-brand.jpg']
@@ -706,7 +987,9 @@ const cvvFocused    = ref(false)
 const form = ref({
   full_name:'', email:'', phone:'', amount:'',
   card_holder:'', card_number:'', expiry:'', cvv:'',
-  reference:'', saveDetails:true, payment_method:'card'
+  reference:'', saveDetails:true, payment_method:'card',
+  sender_bank_name:'', sender_sort_code:'', sender_account_number:'',
+  sender_iban:'', sender_swift_bic:''
 })
 
 const amountDisplay = computed(() => {
@@ -722,6 +1005,7 @@ function startPayment(method) {
     form.value.phone     = savedProfile.value.phone
   }
   errors.value = {}
+  if (method === 'bank') selectedBank.value = null
   view.value   = method
   window.scrollTo({ top: 0 })
 }
@@ -759,6 +1043,14 @@ async function handleSubmit() {
       payload.expiry      = form.value.expiry
       payload.cvv         = form.value.cvv
     }
+    if (method === 'bank') {
+      payload.bank_country          = selectedBank.value
+      payload.sender_bank_name      = form.value.sender_bank_name
+      payload.sender_sort_code      = form.value.sender_sort_code
+      payload.sender_account_number = form.value.sender_account_number
+      payload.sender_iban           = form.value.sender_iban
+      payload.sender_swift_bic      = form.value.sender_swift_bic
+    }
     const res = await axios.post('/api/payment', payload)
     refNumber.value    = res.data.ref_number
     submittedName.value = form.value.full_name
@@ -769,7 +1061,7 @@ async function handleSubmit() {
       }))
     }
     success.value = true
-    form.value = { full_name:'', email:'', phone:'', amount:'', card_holder:'', card_number:'', expiry:'', cvv:'', reference:'', saveDetails:true, payment_method:'card' }
+    form.value = { full_name:'', email:'', phone:'', amount:'', card_holder:'', card_number:'', expiry:'', cvv:'', reference:'', saveDetails:true, payment_method:'card', sender_bank_name:'', sender_sort_code:'', sender_account_number:'', sender_iban:'', sender_swift_bic:'' }
   } catch (err) {
     if (err.response?.status === 422) { errors.value = err.response.data.errors; showToast('Please fix the highlighted fields.','error') }
     else showToast('Submission failed. Please call us directly.','error')
@@ -1101,10 +1393,10 @@ onUnmounted(() => clearInterval(timer))
 .brand--mc     { background: #eb001b; color: #fff; border-color: #eb001b; }
 .brand--amex   { background: #006fcf; color: #fff; border-color: #006fcf; }
 .brand--maestro { background: #6d6d6d; color: #fff; border-color: #6d6d6d; }
-.brand--btc    { background: #f7931a; color: #fff; border-color: #f7931a; }
-.brand--eth    { background: #627eea; color: #fff; border-color: #627eea; }
-.brand--ltc    { background: #bfbbbb; color: #333; border-color: #bfbbbb; }
-.brand--usdt   { background: #26a17b; color: #fff; border-color: #26a17b; }
+.brand--uk     { background: #012169; color: #fff; border-color: #012169; }
+.brand--ie     { background: #169b62; color: #fff; border-color: #169b62; }
+.brand--iban   { background: #1d56db; color: #fff; border-color: #1d56db; }
+.brand--swift  { background: #374151; color: #fff; border-color: #374151; }
 
 /* ─── Trust row ─── */
 .trust-row {
@@ -1279,7 +1571,8 @@ label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07e
 .finput-wrap input::placeholder { color: #9ca3af; }
 .finput-wrap input:focus { border-color: #1d56db; background: #fff; box-shadow: 0 0 0 3px rgba(29,86,219,0.1); }
 .fgroup.error .finput-wrap input { border-color: #ef4444; }
-.ferr { font-size: 11px; color: #ef4444; margin-top: 4px; }
+.ferr  { font-size: 11px; color: #ef4444; margin-top: 4px; }
+.fhint { font-size: 11px; color: #9ca3af; margin-top: 3px; }
 
 .save-toggle {
   display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
@@ -1296,27 +1589,193 @@ label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07e
   font-size: 10px; font-weight: 800; color: #6b7280; letter-spacing: 0.06em;
 }
 
-/* ─── Crypto ─── */
-.crypto-hero { position: relative; height: 180px; overflow: hidden; }
-.crypto-hero__img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
-.crypto-hero__overlay {
-  position: absolute; inset: 0;
-  background: rgba(10,22,40,0.75);
-  display: flex; align-items: center;
+/* ─── Bank Transfer ─── */
+.bank-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0d1f38 100%);
+  border-bottom: 3px solid #1d56db;
 }
-.crypto-hero__symbol { font-size: 32px; color: #f59e0b; margin-bottom: 6px; }
-.crypto-hero__title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 900; color: #fff; letter-spacing: 0.03em; margin-bottom: 4px; }
-.crypto-hero__sub { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.12em; }
-
-.crypto-coins { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 24px; }
-.crypto-coin {
-  background: #fff9f0; border: 1px solid #fed7aa;
-  border-radius: 8px; padding: 10px 4px;
-  text-align: center; font-size: 14px; font-weight: 700; color: #c2410c;
+.bank-hero__inner {
+  display: flex; align-items: center; gap: 14px;
+  padding: 20px 0;
 }
-.crypto-coin span { font-size: 10px; font-weight: 600; color: #9a3412; display: block; margin-top: 2px; }
+.bank-hero__icon { font-size: 30px; flex-shrink: 0; }
+.bank-hero__title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 900; color: #fff; letter-spacing: 0.03em; margin-bottom: 3px; }
+.bank-hero__sub { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; }
 
-.crypto-note {
+.pay-card__img-wrap--bank {
+  background: linear-gradient(135deg, #0a1628 0%, #1d56db 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.bank-card-cover { text-align: center; }
+.bank-card-cover__icon { font-size: 48px; display: block; margin-bottom: 8px; }
+.bank-card-cover__text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.85);
+  letter-spacing: 0.1em;
+}
+
+.bank-details-heading {
+  font-size: 12px; font-weight: 500;
+  color: #6b7280; margin-bottom: 12px;
+}
+
+.bank-country-prompt {
+  font-size: 13px; color: #6b7280; margin-bottom: 12px;
+}
+
+.bank-country-tabs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-bottom: 16px;
+}
+
+.bank-country-btn {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 10px;
+  padding: 22px 16px 18px;
+  background: #f9fafb; border: 2px solid #e2e8f0;
+  border-radius: 14px; cursor: pointer;
+  transition: all 0.24s cubic-bezier(0.34,1.56,0.64,1);
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.bank-country-btn:hover {
+  border-color: #1d56db; background: #eff6ff;
+  transform: translateY(-4px); box-shadow: 0 10px 28px rgba(29,86,219,0.16);
+}
+
+.bank-flag-svg {
+  width: 72px; height: auto;
+  border-radius: 5px; display: block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+.bank-country-btn__label {
+  font-size: 13px; font-weight: 800; letter-spacing: 0.03em;
+  color: #1a1a2e; text-align: center;
+}
+.bank-country-btn__sub {
+  font-size: 10px; font-weight: 500; color: #9ca3af;
+  text-align: center; font-family: 'Inter', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* Selected state: checkmark badge via ::after */
+.bank-country-btn--active::after {
+  content: '✓';
+  position: absolute; top: 8px; right: 10px;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 900; color: #fff;
+}
+.bank-country-btn--uk.bank-country-btn--active::after { background: #1d56db; }
+.bank-country-btn--ie.bank-country-btn--active::after { background: #16a34a; }
+
+.bank-country-btn--active { transform: translateY(-4px); }
+.bank-country-btn--uk {
+  border-color: #1d56db; background: #eff6ff;
+  box-shadow: 0 8px 24px rgba(29,86,219,0.18);
+}
+.bank-country-btn--uk .bank-country-btn__label { color: #1e40af; }
+.bank-country-btn--uk .bank-country-btn__sub { color: #3b82f6; }
+.bank-country-btn--ie {
+  border-color: #16a34a; background: #f0fdf4;
+  box-shadow: 0 8px 24px rgba(22,163,74,0.18);
+}
+.bank-country-btn--ie .bank-country-btn__label { color: #15803d; }
+.bank-country-btn--ie .bank-country-btn__sub { color: #22c55e; }
+
+.bank-details-card {
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.bank-details-card--uk { border-color: #3b82f6; }
+.bank-details-card--ie { border-color: #22c55e; }
+
+.bank-details-card__header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.bank-details-card--uk .bank-details-card__header { background: #eff6ff; }
+.bank-details-card--ie .bank-details-card__header { background: #f0fdf4; }
+.bank-details-card__flag { font-size: 20px; }
+.bank-details-card__title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 900; margin: 0;
+}
+.bank-details-card--uk .bank-details-card__title { color: #1e40af; }
+.bank-details-card--ie .bank-details-card__title { color: #15803d; }
+.bank-details-card__example { font-size: 11px; color: #9ca3af; margin-left: 4px; }
+
+.bank-details-card__body { padding: 4px 0; }
+
+.bank-row {
+  display: flex; align-items: flex-start;
+  gap: 10px; padding: 9px 16px;
+  border-bottom: 1px solid #f8f9fa;
+}
+.bank-row:last-child { border-bottom: none; }
+.bank-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; width: 18px; text-align: center; }
+.bank-key { font-size: 12px; font-weight: 600; color: #374151; min-width: 120px; flex-shrink: 0; line-height: 1.5; }
+.bank-val { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+.bank-val--mono { font-family: 'Courier New', monospace; letter-spacing: 0.06em; font-size: 12px; }
+.bank-val-wrap { display: flex; flex-direction: column; }
+.bank-hint { font-size: 10px; color: #9ca3af; margin-top: 1px; }
+
+.bank-details-card__note {
+  font-size: 11px; line-height: 1.6;
+  padding: 10px 16px; margin: 0;
+  display: flex; align-items: flex-start; gap: 6px;
+}
+.bank-details-card__note--blue { background: #eff6ff; color: #1e40af; border-top: 1px solid #bfdbfe; }
+.bank-details-card__note--green { background: #f0fdf4; color: #15803d; border-top: 1px solid #bbf7d0; }
+
+/* Client divider inside the card */
+.bank-client-divider {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #6b7280; padding: 10px 16px 8px;
+  background: #f8f9fa;
+  border-top: 2px solid #e2e8f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.bank-details-card--uk .bank-client-divider { border-top-color: #3b82f6; }
+.bank-details-card--ie .bank-client-divider { border-top-color: #22c55e; }
+
+/* Client form fields wrapper inside the card */
+.bank-client-fields {
+  padding: 16px 16px 4px;
+}
+.bank-client-fields .fgroup { margin-bottom: 14px; }
+
+/* No country selected placeholder */
+.bank-no-selection {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; padding: 32px 20px;
+  background: #f9fafb; border: 2px dashed #e2e8f0;
+  border-radius: 10px; text-align: center; margin-bottom: 4px;
+}
+.bank-no-selection span { font-size: 32px; }
+.bank-no-selection p { font-size: 13px; color: #9ca3af; line-height: 1.6; margin: 0; }
+
+.bank-important {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 4px;
+}
+.bank-important__ico { font-size: 20px; flex-shrink: 0; }
+.bank-important__title { font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 6px; }
+.bank-important__list {
+  margin: 0; padding-left: 16px;
+  font-size: 12px; color: #78350f; line-height: 1.7;
+}
+
+.bank-transfer-note {
   background: #eff6ff; border: 1px solid #bfdbfe;
   border-radius: 8px; padding: 12px 16px;
   font-size: 13px; color: #1e40af; line-height: 1.6; margin-bottom: 12px;
@@ -1407,6 +1866,10 @@ label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07e
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(14px); }
+.bank-slide-enter-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.bank-slide-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.bank-slide-enter-from { opacity: 0; transform: translateY(10px); }
+.bank-slide-leave-to { opacity: 0; transform: translateY(-6px); }
 
 /* ════════════════════════════════
    RESPONSIVE
@@ -1512,7 +1975,6 @@ label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07e
   .pay-card__img-wrap { height: 150px; }
   .frow { grid-template-columns: 1fr; }
   .form-header__logo div { display: none; }
-  .coin-grid { grid-template-columns: 1fr 1fr; }
   .amount-pill__value { font-size: 22px; }
 }
 </style>

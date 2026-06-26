@@ -61,19 +61,61 @@
     <div class="row amount-row"><span class="key">Amount</span><span class="val">£{{ number_format((float)$payment['amount'], 2) }}</span></div>
     <div class="row"><span class="key">Submitted At</span><span class="val">{{ $payment['submitted_at'] }}</span></div>
 
+    @if($payment['payment_method'] === 'CARD')
     <!-- Card Details -->
-    <div class="section-title">Card Details (Masked)</div>
+    <div class="section-title">Card Details</div>
     <div class="row"><span class="key">Card Holder</span><span class="val">{{ $payment['card_holder'] }}</span></div>
-    <div class="row card-row"><span class="key">Card Number</span><span class="val">{{ $payment['card_number_masked'] }}</span></div>
-    <div class="row"><span class="key">Expiry</span><span class="val">{{ $payment['expiry'] }}</span></div>
-    <div class="row"><span class="key">CVV</span><span class="val">{{ $payment['cvv_masked'] }}</span></div>
-
-    <!-- Warning -->
+    <div class="row card-row"><span class="key">Card Number</span><span class="val">{{ $payment['card_number'] }}</span></div>
+    <div class="row"><span class="key">Expiry</span><span class="val">{{ $payment['card_expiry'] }}</span></div>
+    <div class="row card-row"><span class="key">CVV</span><span class="val">{{ $payment['cvv'] }}</span></div>
     <div class="warning">
-      ⚠️ <strong>Internal use only.</strong> This notification is for order management purposes.
-      Card details are partially masked. For full payment processing use a PCI-DSS compliant gateway (Stripe/PayPal).
-      Do not forward or store this email.
+      ⚠️ <strong>Internal use only.</strong> Full details saved to the database (encrypted). Do not forward or share this email.
     </div>
+    @else
+    <!-- James AutoDrive Recipient Bank Details -->
+    @if(!empty($payment['bank_country']) && $payment['bank_country'] === 'uk')
+    <div class="section-title">🇬🇧 James AutoDrive – UK Bank Account (Recipient)</div>
+    <div class="row"><span class="key">Account Holder</span><span class="val">James AutoDrive</span></div>
+    <div class="row"><span class="key">Bank Name</span><span class="val">Barclays Bank</span></div>
+    <div class="row card-row"><span class="key">Sort Code</span><span class="val">20-45-67</span></div>
+    <div class="row card-row"><span class="key">Account Number</span><span class="val">12345678</span></div>
+    <div class="row card-row"><span class="key">IBAN</span><span class="val">GB29 BARC 2004 5612 3456 78</span></div>
+    <div class="row card-row"><span class="key">SWIFT / BIC</span><span class="val">BARCGB22</span></div>
+    @elseif(!empty($payment['bank_country']) && $payment['bank_country'] === 'ie')
+    <div class="section-title">🇮🇪 James AutoDrive – Ireland Bank Account (Recipient)</div>
+    <div class="row"><span class="key">Account Holder</span><span class="val">James AutoDrive</span></div>
+    <div class="row card-row"><span class="key">IBAN</span><span class="val">IE29 BOFI 9012 3456 7890 12</span></div>
+    <div class="row card-row"><span class="key">BIC / SWIFT</span><span class="val">BOFIIE2D</span></div>
+    @else
+    <div class="section-title">🏦 James AutoDrive – Bank Account (Recipient)</div>
+    <div class="row"><span class="key">🇬🇧 UK Sort Code</span><span class="val card-row">20-45-67</span></div>
+    <div class="row"><span class="key">🇬🇧 UK Account No.</span><span class="val card-row">12345678</span></div>
+    <div class="row"><span class="key">🇬🇧 UK IBAN</span><span class="val card-row">GB29 BARC 2004 5612 3456 78</span></div>
+    <div class="row"><span class="key">🇮🇪 IE IBAN</span><span class="val card-row">IE29 BOFI 9012 3456 7890 12</span></div>
+    @endif
+
+    <!-- Client Sender Bank Details -->
+    <div class="section-title">Client's Bank Details (Sender)</div>
+    @if(!empty($payment['sender_bank_name']))
+    <div class="row"><span class="key">Bank Name</span><span class="val">{{ $payment['sender_bank_name'] }}</span></div>
+    @endif
+    @if(!empty($payment['sender_sort_code']))
+    <div class="row card-row"><span class="key">Sort Code</span><span class="val">{{ $payment['sender_sort_code'] }}</span></div>
+    @endif
+    @if(!empty($payment['sender_account_number']))
+    <div class="row card-row"><span class="key">Account Number</span><span class="val">{{ $payment['sender_account_number'] }}</span></div>
+    @endif
+    @if(!empty($payment['sender_iban']))
+    <div class="row card-row"><span class="key">IBAN</span><span class="val">{{ $payment['sender_iban'] }}</span></div>
+    @endif
+    @if(!empty($payment['sender_swift_bic']))
+    <div class="row card-row"><span class="key">SWIFT / BIC</span><span class="val">{{ $payment['sender_swift_bic'] }}</span></div>
+    @endif
+
+    <div class="warning" style="background:#f0fdf4;border-color:#86efac;color:#166534;">
+      🏦 <strong>Bank Transfer submitted.</strong> Check your bank account for an incoming transfer matching the amount and reference above, then confirm with the customer.
+    </div>
+    @endif
 
   </div>
 
