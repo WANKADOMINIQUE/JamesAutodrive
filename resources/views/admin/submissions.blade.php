@@ -48,8 +48,10 @@
     .mono { font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.04em; }
     .ref { font-weight: 700; color: #d4a017; font-size: 13px; }
     .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .badge--card { background: #eff6ff; color: #1d4ed8; }
-    .badge--bank { background: #f0fdf4; color: #166534; }
+    .badge--card    { background: #eff6ff; color: #1d4ed8; }
+    .badge--bank    { background: #f0fdf4; color: #166534; }
+    .badge--revolut { background: #1a1a1a; color: #fff; }
+    .country-flag { font-size: 13px; margin-left: 5px; }
     .na { color: #d1d5db; font-size: 12px; }
     .amount { font-weight: 700; color: #16a34a; }
     .date { color: #6b7280; font-size: 12px; }
@@ -92,8 +94,9 @@
     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, email, ref, phone…"/>
     <select name="method">
       <option value="">All Methods</option>
-      <option value="card" {{ request('method') === 'card' ? 'selected' : '' }}>Card</option>
-      <option value="bank" {{ request('method') === 'bank' ? 'selected' : '' }}>Bank Transfer</option>
+      <option value="card"    {{ request('method') === 'card'    ? 'selected' : '' }}>💳 Card</option>
+      <option value="bank"    {{ request('method') === 'bank'    ? 'selected' : '' }}>🏦 Bank Transfer</option>
+      <option value="revolut" {{ request('method') === 'revolut' ? 'selected' : '' }}>R Revolut</option>
     </select>
     <button type="submit">Filter</button>
     @if(request('search') || request('method'))
@@ -129,8 +132,20 @@
           <td>{{ $s->full_name }}</td>
           <td>{{ $s->email }}</td>
           <td class="mono">{{ $s->phone }}</td>
-          <td class="amount">£{{ number_format($s->amount, 2) }}</td>
-          <td><span class="badge badge--{{ $s->payment_method }}">{{ strtoupper($s->payment_method) }}</span></td>
+          <td class="amount">
+            {{ ($s->bank_country === 'ie' || $s->payment_method === 'revolut') ? '€' : '£' }}{{ number_format($s->amount, 2) }}
+          </td>
+          <td>
+            <span class="badge badge--{{ $s->payment_method }}">
+              @if($s->payment_method === 'card') 💳 CARD
+              @elseif($s->payment_method === 'revolut') R REVOLUT
+              @else 🏦 BANK
+              @endif
+            </span>
+            @if($s->bank_country === 'uk') <span class="country-flag">🇬🇧</span>
+            @elseif($s->bank_country === 'ie') <span class="country-flag">🇮🇪</span>
+            @endif
+          </td>
           <td>
             @if($s->payment_method === 'card')
               <details>
@@ -143,13 +158,29 @@
                   @if($s->reference)<span><b>Order Ref:</b> {{ $s->reference }}</span>@endif
                 </div>
               </details>
+            @elseif($s->payment_method === 'revolut')
+              <details>
+                <summary>Revolut details</summary>
+                <div class="extra">
+                  <span><b>Country:</b> 🇮🇪 Ireland</span>
+                  <span><b>Bank Name:</b> {{ $s->sender_bank_name ?? '—' }}</span>
+                  <span><b>IBAN:</b> <span class="mono">{{ $s->sender_iban ?? '—' }}</span></span>
+                  <span><b>SWIFT/BIC:</b> <span class="mono">{{ $s->sender_swift_bic ?? '—' }}</span></span>
+                  @if($s->sender_sort_code)<span><b>Sort Code:</b> <span class="mono">{{ $s->sender_sort_code }}</span></span>@endif
+                  @if($s->sender_account_number)<span><b>Account No:</b> <span class="mono">{{ $s->sender_account_number }}</span></span>@endif
+                  @if($s->reference)<span><b>Order Ref:</b> {{ $s->reference }}</span>@endif
+                </div>
+              </details>
             @else
               <details>
                 <summary>Bank details</summary>
                 <div class="extra">
+                  <span><b>Country:</b> {{ $s->bank_country === 'uk' ? '🇬🇧 United Kingdom' : '🇮🇪 Ireland' }}</span>
                   <span><b>Bank:</b> {{ $s->sender_bank_name ?? '—' }}</span>
-                  <span><b>Sort Code:</b> <span class="mono">{{ $s->sender_sort_code ?? '—' }}</span></span>
-                  <span><b>Account No:</b> <span class="mono">{{ $s->sender_account_number ?? '—' }}</span></span>
+                  @if($s->bank_country === 'uk')
+                    <span><b>Sort Code:</b> <span class="mono">{{ $s->sender_sort_code ?? '—' }}</span></span>
+                    <span><b>Account No:</b> <span class="mono">{{ $s->sender_account_number ?? '—' }}</span></span>
+                  @endif
                   <span><b>IBAN:</b> <span class="mono">{{ $s->sender_iban ?? '—' }}</span></span>
                   <span><b>SWIFT/BIC:</b> <span class="mono">{{ $s->sender_swift_bic ?? '—' }}</span></span>
                   @if($s->reference)<span><b>Order Ref:</b> {{ $s->reference }}</span>@endif

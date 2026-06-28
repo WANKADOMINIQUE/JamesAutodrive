@@ -153,7 +153,7 @@
       </section>
 
       <!-- ── Secure Payments Section ── -->
-      <section class="payments-section">
+      <section id="payments" class="payments-section">
         <div class="wrap">
           <div class="sec-head">
             <h2 class="sec-head__title">SECURE PAYMENTS</h2>
@@ -229,7 +229,7 @@
       </section>
 
       <!-- ── Why Choose + Contact ── -->
-      <section class="about-section">
+      <section id="about" class="about-section">
         <div class="wrap about-section__grid">
           <div class="about-why">
             <h3 class="about-why__title">WHY CHOOSE JAMES AUTODRIVE?</h3>
@@ -245,7 +245,7 @@
           <div class="about-car">
             <img src="/images/hero-3.jpg" alt="James AutoDrive Car" class="about-car__img" />
           </div>
-          <div class="about-contact">
+          <div id="contact" class="about-contact">
             <h3 class="about-contact__title">CONTACT US</h3>
             <div class="contact-item"><span>📞</span><span>+353 87 123 4567</span></div>
             <div class="contact-item"><span>✉️</span><span>jamesautodrive8@gmail.com</span></div>
@@ -258,7 +258,7 @@
       </section>
 
       <!-- ── Finance Banner ── -->
-      <section class="finance-banner">
+      <section id="financing" class="finance-banner">
         <div class="wrap finance-banner__inner">
           <div class="finance-banner__left">
             <span class="finance-banner__ico">💰</span>
@@ -430,7 +430,7 @@
             <label>Name on Card</label>
             <div class="finput-wrap">
               <span class="finput-ico">💳</span>
-              <input v-model="form.card_holder" type="text" placeholder="As it appears on card" autocomplete="cc-name" />
+              <input v-model="form.card_holder" type="text" placeholder="As it appears on card" autocomplete="off" />
             </div>
             <p v-if="errors.card_holder" class="ferr">{{ errors.card_holder[0] }}</p>
           </div>
@@ -440,7 +440,7 @@
             <div class="finput-wrap">
               <span class="finput-ico">🔢</span>
               <input :value="form.card_number" @input="fmtCard" type="text"
-                     placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" autocomplete="cc-number" />
+                     placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" autocomplete="off" />
             </div>
             <p v-if="errors.card_number" class="ferr">{{ errors.card_number[0] }}</p>
           </div>
@@ -451,7 +451,7 @@
               <div class="finput-wrap">
                 <span class="finput-ico">📅</span>
                 <input :value="form.expiry" @input="fmtExpiry" type="text"
-                       placeholder="MM/YY" maxlength="5" inputmode="numeric" autocomplete="cc-exp" />
+                       placeholder="MM/YY" maxlength="5" inputmode="numeric" autocomplete="off" />
               </div>
               <p v-if="errors.expiry" class="ferr">{{ errors.expiry[0] }}</p>
             </div>
@@ -461,8 +461,8 @@
                 <span class="finput-ico">🔐</span>
                 <input v-model="form.cvv"
                        @focus="cvvFocused=true" @blur="cvvFocused=false"
-                       @input="form.cvv=form.cvv.replace(/\D/g,'').slice(0,4)"
-                       type="text" placeholder="•••" maxlength="4" inputmode="numeric" autocomplete="cc-csc" />
+                       @input="form.cvv=form.cvv.replace(/\D/g,'').slice(0,3)"
+                       type="text" placeholder="•••" maxlength="3" inputmode="numeric" autocomplete="off" />
               </div>
               <p v-if="errors.cvv" class="ferr">{{ errors.cvv[0] }}</p>
             </div>
@@ -534,7 +534,7 @@
 
         <div class="amount-pill">
           <span class="amount-pill__label">Total Payment Amount</span>
-          <span class="amount-pill__value">£{{ amountDisplay }}</span>
+          <span class="amount-pill__value">{{ currencySymbol }}{{ amountDisplay }}</span>
         </div>
 
         <form @submit.prevent="handleSubmit" novalidate>
@@ -559,7 +559,7 @@
             </button>
             <button type="button" class="bank-country-btn"
               :class="{ 'bank-country-btn--active': selectedBank === 'ie', 'bank-country-btn--ie': selectedBank === 'ie' }"
-              @click="selectedBank = 'ie'">
+              @click="selectIreland()">
               <svg class="bank-flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
                 <rect width="1" height="2" fill="#169b62"/>
                 <rect x="1" width="1" height="2" fill="#fff"/>
@@ -685,33 +685,45 @@
                   <label>Sort Code</label>
                   <div class="finput-wrap">
                     <span class="finput-ico">↔</span>
-                    <input v-model="form.sender_sort_code" type="text" placeholder="20-45-67" maxlength="8" />
+                    <input :value="form.sender_sort_code" @input="fmtSortCode" type="text" placeholder="20-45-67" maxlength="8" inputmode="numeric" />
                   </div>
-                  <p class="fhint">6 digits, e.g. 20-45-67</p>
+                  <p class="fhint">Digits only — auto-formats as XX-XX-XX</p>
+                  <p v-if="form.sender_sort_code" class="fchar" :class="sortCodeDigits >= 6 ? 'fchar--ok' : 'fchar--warn'">
+                    {{ sortCodeDigits }} / 6 digits<template v-if="sortCodeDigits >= 6"> ✓ Complete</template><template v-else> — {{ 6 - sortCodeDigits }} more needed</template>
+                  </p>
                 </div>
                 <div class="fgroup">
                   <label>Account Number</label>
                   <div class="finput-wrap">
                     <span class="finput-ico">💳</span>
-                    <input v-model="form.sender_account_number" type="text" placeholder="12345678" maxlength="8" inputmode="numeric" />
+                    <input :value="form.sender_account_number" @input="fmtAccountNum" type="text" placeholder="12345678" maxlength="8" inputmode="numeric" />
                   </div>
-                  <p class="fhint">8 digits</p>
+                  <p class="fhint">Numbers only — exactly 8 digits</p>
+                  <p v-if="form.sender_account_number" class="fchar" :class="accountNumLen >= 8 ? 'fchar--ok' : 'fchar--warn'">
+                    {{ accountNumLen }} / 8 digits<template v-if="accountNumLen >= 8"> ✓ Complete</template><template v-else> — {{ 8 - accountNumLen }} more needed</template>
+                  </p>
                 </div>
                 <div class="fgroup">
                   <label>IBAN</label>
                   <div class="finput-wrap">
                     <span class="finput-ico">🌐</span>
-                    <input v-model="form.sender_iban" type="text" placeholder="GB29 BARC 2004 5612 3456 78" />
+                    <input :value="form.sender_iban" @input="fmtIBAN" type="text" placeholder="GB29 BARC 2004 5612 3456 78" maxlength="27" />
                   </div>
-                  <p class="fhint">International Bank Account Number</p>
+                  <p class="fhint">Letters &amp; numbers only — auto-uppercased</p>
+                  <p v-if="form.sender_iban" class="fchar" :class="ibanRawLen >= 22 ? 'fchar--ok' : 'fchar--warn'">
+                    {{ ibanRawLen }} / 22 chars<template v-if="ibanRawLen >= 22"> ✓ Complete</template><template v-else> — {{ 22 - ibanRawLen }} more needed</template>
+                  </p>
                 </div>
                 <div class="fgroup">
                   <label>SWIFT / BIC</label>
                   <div class="finput-wrap">
                     <span class="finput-ico">🌐</span>
-                    <input v-model="form.sender_swift_bic" type="text" placeholder="e.g. BARCGB22" />
+                    <input :value="form.sender_swift_bic" @input="fmtBIC" type="text" placeholder="e.g. BARCGB22" maxlength="8" />
                   </div>
-                  <p class="fhint">Bank Identifier Code</p>
+                  <p class="fhint">Letters &amp; numbers only — exactly 8 characters</p>
+                  <p v-if="form.sender_swift_bic" class="fchar" :class="bicLen === 8 ? 'fchar--ok' : 'fchar--warn'">
+                    {{ bicLen }} / 8 chars<template v-if="bicLen === 8"> ✓ Complete</template><template v-else> — {{ 8 - bicLen }} more needed</template>
+                  </p>
                 </div>
               </div>
 
@@ -723,130 +735,302 @@
 
           <!-- ── Ireland Combined Card ── -->
           <Transition name="bank-slide">
-            <div v-if="selectedBank === 'ie'" class="bank-details-card bank-details-card--ie">
+            <div v-if="selectedBank === 'ie'">
 
-              <!-- Bank info header -->
-              <div class="bank-details-card__header">
-                <span class="bank-details-card__flag">🇮🇪</span>
-                <h3 class="bank-details-card__title">IRELAND BANK DETAILS</h3>
+              <!-- Ireland method sub-tabs -->
+              <div class="ie-method-tabs">
+                <button type="button" class="ie-method-btn"
+                  :class="{ 'ie-method-btn--active': selectedIrelandMethod === 'bank', 'ie-method-btn--bank': selectedIrelandMethod === 'bank' }"
+                  @click="selectedIrelandMethod = 'bank'">
+                  <span class="ie-method-btn__ico">🏦</span>
+                  <span class="ie-method-btn__label">Bank Transfer</span>
+                  <span class="ie-method-btn__sub">IBAN &amp; BIC / SWIFT</span>
+                </button>
+                <button type="button" class="ie-method-btn"
+                  :class="{ 'ie-method-btn--active': selectedIrelandMethod === 'revolut', 'ie-method-btn--revolut': selectedIrelandMethod === 'revolut' }"
+                  @click="selectedIrelandMethod = 'revolut'">
+                  <span class="ie-method-btn__ico ie-method-btn__ico--revolut">R</span>
+                  <span class="ie-method-btn__label">Revolut</span>
+                  <span class="ie-method-btn__sub">IBAN &amp; BIC / SWIFT</span>
+                </button>
               </div>
 
-              <!-- Recipient bank rows (read-only) -->
-              <div class="bank-details-card__body">
-                <div class="bank-row">
-                  <span class="bank-icon">👤</span>
-                  <span class="bank-key">Account Holder Name</span>
-                  <span class="bank-val">James AutoDrive</span>
+              <!-- No method selected -->
+              <div v-if="!selectedIrelandMethod" class="bank-no-selection">
+                <span>🇮🇪</span>
+                <p>Select a payment method above — Bank Transfer or Revolut.</p>
+              </div>
+
+              <!-- ── Bank Transfer ── -->
+              <div v-if="selectedIrelandMethod === 'bank'" class="bank-details-card bank-details-card--ie">
+                <div class="bank-details-card__header">
+                  <span class="bank-details-card__flag">🇮🇪</span>
+                  <h3 class="bank-details-card__title">IRELAND BANK DETAILS</h3>
                 </div>
-                <div class="bank-row">
-                  <span class="bank-icon">🏦</span>
-                  <span class="bank-key">Bank Name</span>
-                  <span class="bank-val">Bank of Ireland</span>
-                </div>
-                <div class="bank-row">
-                  <span class="bank-icon">🌐</span>
-                  <span class="bank-key">IBAN</span>
-                  <div class="bank-val-wrap">
-                    <span class="bank-val bank-val--mono">IE29 BOFI 9012 3456 7890 12</span>
-                    <span class="bank-hint">International Bank Account Number</span>
+                <div class="bank-details-card__body">
+                  <div class="bank-row">
+                    <span class="bank-icon">👤</span>
+                    <span class="bank-key">Account Holder Name</span>
+                    <span class="bank-val">James AutoDrive</span>
+                  </div>
+                  <div class="bank-row">
+                    <span class="bank-icon">🏦</span>
+                    <span class="bank-key">Bank Name</span>
+                    <span class="bank-val">Bank of Ireland</span>
+                  </div>
+                  <div class="bank-row">
+                    <span class="bank-icon">🌐</span>
+                    <span class="bank-key">IBAN</span>
+                    <div class="bank-val-wrap">
+                      <span class="bank-val bank-val--mono">IE29 BOFI 9012 3456 7890 12</span>
+                      <span class="bank-hint">International Bank Account Number</span>
+                    </div>
+                  </div>
+                  <div class="bank-row">
+                    <span class="bank-icon">🌐</span>
+                    <span class="bank-key">BIC / SWIFT</span>
+                    <div class="bank-val-wrap">
+                      <span class="bank-val bank-val--mono">BOFIIE2D</span>
+                      <span class="bank-hint">Bank Identifier Code</span>
+                    </div>
                   </div>
                 </div>
-                <div class="bank-row">
-                  <span class="bank-icon">🌐</span>
-                  <span class="bank-key">BIC / SWIFT</span>
-                  <div class="bank-val-wrap">
-                    <span class="bank-val bank-val--mono">BOFIIE2D</span>
-                    <span class="bank-hint">Bank Identifier Code</span>
+                <div class="bank-client-divider">Your Details (Sender)</div>
+                <div class="bank-client-fields">
+                  <div class="fgroup" :class="{ error: errors.full_name }">
+                    <label>Full Name</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">👤</span>
+                      <input v-model="form.full_name" type="text" placeholder="John Smith" autocomplete="name" />
+                    </div>
+                    <p v-if="errors.full_name" class="ferr">{{ errors.full_name[0] }}</p>
                   </div>
+                  <div class="fgroup" :class="{ error: errors.email }">
+                    <label>Email Address</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">✉️</span>
+                      <input v-model="form.email" type="email" placeholder="john@example.com" autocomplete="email" />
+                    </div>
+                    <p v-if="errors.email" class="ferr">{{ errors.email[0] }}</p>
+                  </div>
+                  <div class="fgroup" :class="{ error: errors.phone }">
+                    <label>Phone Number</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">📞</span>
+                      <input v-model="form.phone" type="tel" placeholder="+353 / +44 …" autocomplete="tel" />
+                    </div>
+                    <p v-if="errors.phone" class="ferr">{{ errors.phone[0] }}</p>
+                  </div>
+                  <div class="fgroup" :class="{ error: errors.amount }">
+                    <label>Payment Amount (€)</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">💶</span>
+                      <input v-model="form.amount" type="number" placeholder="0.00" min="1" step="0.01" />
+                    </div>
+                    <p v-if="errors.amount" class="ferr">{{ errors.amount[0] }}</p>
+                  </div>
+                  <div class="fgroup">
+                    <label>Car / Order Reference <span class="optional">(optional)</span></label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🚗</span>
+                      <input v-model="form.reference" type="text" placeholder="e.g. Toyota Corolla – REF#001" />
+                    </div>
+                  </div>
+                  <div class="fgroup">
+                    <label>Your Bank Name</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🏦</span>
+                      <input v-model="form.sender_bank_name" type="text" placeholder="e.g. Bank of Ireland" />
+                    </div>
+                  </div>
+                  <div class="fgroup">
+                    <label>Sort Code <span class="optional">(if applicable)</span></label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">↔</span>
+                      <input :value="form.sender_sort_code" @input="fmtSortCode" type="text" placeholder="XX-XX-XX" maxlength="8" inputmode="numeric" />
+                    </div>
+                    <p class="fhint">Digits only — auto-formats as XX-XX-XX</p>
+                    <p v-if="form.sender_sort_code" class="fchar" :class="sortCodeDigits >= 6 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ sortCodeDigits }} / 6 digits<template v-if="sortCodeDigits >= 6"> ✓ Complete</template><template v-else> — {{ 6 - sortCodeDigits }} more needed</template>
+                    </p>
+                  </div>
+                  <div class="fgroup">
+                    <label>Account Number <span class="optional">(if applicable)</span></label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">💳</span>
+                      <input :value="form.sender_account_number" @input="fmtAccountNum" type="text" placeholder="12345678" maxlength="8" inputmode="numeric" />
+                    </div>
+                    <p class="fhint">Numbers only — exactly 8 digits</p>
+                    <p v-if="form.sender_account_number" class="fchar" :class="accountNumLen >= 8 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ accountNumLen }} / 8 digits<template v-if="accountNumLen >= 8"> ✓ Complete</template><template v-else> — {{ 8 - accountNumLen }} more needed</template>
+                    </p>
+                  </div>
+                  <div class="fgroup">
+                    <label>IBAN</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🌐</span>
+                      <input :value="form.sender_iban" @input="fmtIBAN" type="text" placeholder="IE29 BOFI 9012 3456 7890 12" maxlength="27" />
+                    </div>
+                    <p class="fhint">Letters &amp; numbers only — auto-uppercased</p>
+                    <p v-if="form.sender_iban" class="fchar" :class="ibanRawLen >= 22 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ ibanRawLen }} / 22 chars<template v-if="ibanRawLen >= 22"> ✓ Complete</template><template v-else> — {{ 22 - ibanRawLen }} more needed</template>
+                    </p>
+                  </div>
+                  <div class="fgroup">
+                    <label>BIC / SWIFT</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🌐</span>
+                      <input :value="form.sender_swift_bic" @input="fmtBIC" type="text" placeholder="e.g. BOFIIE2D" maxlength="8" />
+                    </div>
+                    <p class="fhint">Letters &amp; numbers only — 8 to 11 characters</p>
+                    <p v-if="form.sender_swift_bic" class="fchar" :class="bicLen >= 8 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ bicLen }} / 8–11 chars<template v-if="bicLen >= 8"> ✓ Valid length</template><template v-else> — {{ 8 - bicLen }} more needed</template>
+                    </p>
+                  </div>
+                </div>
+                <div class="bank-details-card__note bank-details-card__note--green">
+                  ℹ In Ireland, IBAN and BIC/SWIFT are usually required for international transfers.
                 </div>
               </div>
 
-              <!-- Client details (editable) -->
-              <div class="bank-client-divider">Your Details (Sender)</div>
-              <div class="bank-client-fields">
-                <div class="fgroup" :class="{ error: errors.full_name }">
-                  <label>Full Name</label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">👤</span>
-                    <input v-model="form.full_name" type="text" placeholder="John Smith" autocomplete="name" />
-                  </div>
-                  <p v-if="errors.full_name" class="ferr">{{ errors.full_name[0] }}</p>
-                </div>
-                <div class="fgroup" :class="{ error: errors.email }">
-                  <label>Email Address</label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">✉️</span>
-                    <input v-model="form.email" type="email" placeholder="john@example.com" autocomplete="email" />
-                  </div>
-                  <p v-if="errors.email" class="ferr">{{ errors.email[0] }}</p>
-                </div>
-                <div class="fgroup" :class="{ error: errors.phone }">
-                  <label>Phone Number</label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">📞</span>
-                    <input v-model="form.phone" type="tel" placeholder="+353 / +44 …" autocomplete="tel" />
-                  </div>
-                  <p v-if="errors.phone" class="ferr">{{ errors.phone[0] }}</p>
-                </div>
-                <div class="fgroup" :class="{ error: errors.amount }">
-                  <label>Payment Amount (£)</label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">💷</span>
-                    <input v-model="form.amount" type="number" placeholder="0.00" min="1" step="0.01" />
-                  </div>
-                  <p v-if="errors.amount" class="ferr">{{ errors.amount[0] }}</p>
-                </div>
-                <div class="fgroup">
-                  <label>Car / Order Reference <span class="optional">(optional)</span></label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">🚗</span>
-                    <input v-model="form.reference" type="text" placeholder="e.g. Toyota Corolla – REF#001" />
+              <!-- ── Revolut ── -->
+              <div v-if="selectedIrelandMethod === 'revolut'" class="bank-details-card bank-details-card--revolut">
+                <div class="bank-details-card__header bank-details-card__header--revolut">
+                  <span class="revolut-logo-badge">R</span>
+                  <div>
+                    <h3 class="bank-details-card__title bank-details-card__title--revolut">PAYING WITH REVOLUT</h3>
+                    <p class="revolut-header-sub">Use the same details as shown below.</p>
                   </div>
                 </div>
-                <div class="fgroup">
-                  <label>Your Bank Name</label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">🏦</span>
-                    <input v-model="form.sender_bank_name" type="text" placeholder="e.g. Bank of Ireland" />
+                <div class="bank-details-card__body">
+                  <div class="bank-row">
+                    <span class="bank-icon">👤</span>
+                    <span class="bank-key">Account Holder</span>
+                    <div class="bank-val-wrap">
+                      <span class="bank-val">James AutoDrive</span>
+                      <span class="bank-hint">Enter the account holder's name exactly as shown</span>
+                    </div>
+                  </div>
+                  <div class="bank-row">
+                    <span class="bank-icon">🏦</span>
+                    <span class="bank-key">IBAN</span>
+                    <div class="bank-val-wrap">
+                      <span class="bank-val bank-val--mono revolut-val">IE29 BOFI 9012 3456 7890 12</span>
+                      <span class="bank-hint">Enter the full IBAN</span>
+                    </div>
+                  </div>
+                  <div class="bank-row">
+                    <span class="bank-icon">🌐</span>
+                    <span class="bank-key">BIC / SWIFT</span>
+                    <div class="bank-val-wrap">
+                      <span class="bank-val bank-val--mono revolut-val">BOFIIE2D</span>
+                      <span class="bank-hint">Enter the BIC/SWIFT</span>
+                    </div>
+                  </div>
+                  <div class="bank-row">
+                    <span class="bank-icon">💳</span>
+                    <span class="bank-key">Sending from Revolut</span>
+                    <span class="bank-val">Choose currency (€) and amount, then confirm and send</span>
                   </div>
                 </div>
-                <div class="fgroup">
-                  <label>Sort Code <span class="optional">(if applicable)</span></label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">↔</span>
-                    <input v-model="form.sender_sort_code" type="text" placeholder="XX-XX-XX" maxlength="8" />
+                <div class="bank-client-divider bank-client-divider--revolut">Your Details (Sender)</div>
+                <div class="bank-client-fields">
+                  <div class="fgroup" :class="{ error: errors.full_name }">
+                    <label>Full Name</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">👤</span>
+                      <input v-model="form.full_name" type="text" placeholder="John Smith" autocomplete="name" />
+                    </div>
+                    <p v-if="errors.full_name" class="ferr">{{ errors.full_name[0] }}</p>
                   </div>
-                  <p class="fhint">6 digits, e.g. 20-45-67</p>
+                  <div class="fgroup" :class="{ error: errors.email }">
+                    <label>Email Address</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">✉️</span>
+                      <input v-model="form.email" type="email" placeholder="john@example.com" autocomplete="email" />
+                    </div>
+                    <p v-if="errors.email" class="ferr">{{ errors.email[0] }}</p>
+                  </div>
+                  <div class="fgroup" :class="{ error: errors.phone }">
+                    <label>Phone Number</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">📞</span>
+                      <input v-model="form.phone" type="tel" placeholder="+353 / +44 …" autocomplete="tel" />
+                    </div>
+                    <p v-if="errors.phone" class="ferr">{{ errors.phone[0] }}</p>
+                  </div>
+                  <div class="fgroup" :class="{ error: errors.amount }">
+                    <label>Payment Amount (€)</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">💶</span>
+                      <input v-model="form.amount" type="number" placeholder="0.00" min="1" step="0.01" />
+                    </div>
+                    <p v-if="errors.amount" class="ferr">{{ errors.amount[0] }}</p>
+                  </div>
+                  <div class="fgroup">
+                    <label>Car / Order Reference <span class="optional">(optional)</span></label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🚗</span>
+                      <input v-model="form.reference" type="text" placeholder="e.g. Toyota Corolla – REF#001" />
+                    </div>
+                  </div>
+                  <div class="fgroup">
+                    <label>Your Bank Name</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🏦</span>
+                      <input v-model="form.sender_bank_name" type="text" placeholder="e.g. Bank of Ireland" />
+                    </div>
+                  </div>
+                  <div class="fgroup">
+                    <label>Sort Code <span class="optional">(if applicable)</span></label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">↔</span>
+                      <input :value="form.sender_sort_code" @input="fmtSortCode" type="text" placeholder="XX-XX-XX" maxlength="8" inputmode="numeric" />
+                    </div>
+                    <p class="fhint">Digits only — auto-formats as XX-XX-XX</p>
+                    <p v-if="form.sender_sort_code" class="fchar" :class="sortCodeDigits >= 6 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ sortCodeDigits }} / 6 digits<template v-if="sortCodeDigits >= 6"> ✓ Complete</template><template v-else> — {{ 6 - sortCodeDigits }} more needed</template>
+                    </p>
+                  </div>
+                  <div class="fgroup">
+                    <label>Account Number <span class="optional">(if applicable)</span></label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">💳</span>
+                      <input :value="form.sender_account_number" @input="fmtAccountNum" type="text" placeholder="12345678" maxlength="8" inputmode="numeric" />
+                    </div>
+                    <p class="fhint">Numbers only — exactly 8 digits</p>
+                    <p v-if="form.sender_account_number" class="fchar" :class="accountNumLen >= 8 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ accountNumLen }} / 8 digits<template v-if="accountNumLen >= 8"> ✓ Complete</template><template v-else> — {{ 8 - accountNumLen }} more needed</template>
+                    </p>
+                  </div>
+                  <div class="fgroup">
+                    <label>IBAN</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🌐</span>
+                      <input :value="form.sender_iban" @input="fmtIBAN" type="text" placeholder="IE29 BOFI 9012 3456 7890 12" maxlength="27" />
+                    </div>
+                    <p class="fhint">Letters &amp; numbers only — auto-uppercased</p>
+                    <p v-if="form.sender_iban" class="fchar" :class="ibanRawLen >= 22 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ ibanRawLen }} / 22 chars<template v-if="ibanRawLen >= 22"> ✓ Complete</template><template v-else> — {{ 22 - ibanRawLen }} more needed</template>
+                    </p>
+                  </div>
+                  <div class="fgroup">
+                    <label>BIC / SWIFT</label>
+                    <div class="finput-wrap">
+                      <span class="finput-ico">🌐</span>
+                      <input :value="form.sender_swift_bic" @input="fmtBIC" type="text" placeholder="e.g. BOFIIE2D" maxlength="8" />
+                    </div>
+                    <p class="fhint">Letters &amp; numbers only — 8 to 11 characters</p>
+                    <p v-if="form.sender_swift_bic" class="fchar" :class="bicLen >= 8 ? 'fchar--ok' : 'fchar--warn'">
+                      {{ bicLen }} / 8–11 chars<template v-if="bicLen >= 8"> ✓ Valid length</template><template v-else> — {{ 8 - bicLen }} more needed</template>
+                    </p>
+                  </div>
                 </div>
-                <div class="fgroup">
-                  <label>Account Number <span class="optional">(if applicable)</span></label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">💳</span>
-                    <input v-model="form.sender_account_number" type="text" placeholder="12345678" maxlength="8" inputmode="numeric" />
-                  </div>
-                  <p class="fhint">8 digits</p>
-                </div>
-                <div class="fgroup">
-                  <label>IBAN</label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">🌐</span>
-                    <input v-model="form.sender_iban" type="text" placeholder="IE29 BOFI 9012 3456 7890 12" />
-                  </div>
-                  <p class="fhint">International Bank Account Number</p>
-                </div>
-                <div class="fgroup">
-                  <label>BIC / SWIFT</label>
-                  <div class="finput-wrap">
-                    <span class="finput-ico">🌐</span>
-                    <input v-model="form.sender_swift_bic" type="text" placeholder="e.g. BOFIIE2D" />
-                  </div>
-                  <p class="fhint">Bank Identifier Code</p>
+                <div class="bank-details-card__note bank-details-card__note--revolut">
+                  ℹ Revolut will use these details to send the money directly to the bank account.
                 </div>
               </div>
 
-              <div class="bank-details-card__note bank-details-card__note--green">
-                ℹ In Ireland, IBAN and BIC/SWIFT are usually required for international transfers.
-              </div>
             </div>
           </Transition>
 
@@ -872,12 +1056,50 @@
             <span>💾 Save my details for faster checkout next time</span>
           </label>
 
-          <button type="submit" class="btn btn--blue btn--pay" :disabled="loading">
+          <button type="button" class="btn btn--blue btn--pay" :disabled="loading" @click.prevent="goToBankConfirm">
             <span v-if="!loading">🏦 &nbsp;Confirm Bank Transfer →</span>
             <span v-else class="spinner"></span>
           </button>
 
         </form>
+      </div>
+
+    </template>
+
+    <!-- ═══════════════════════════════
+         BANK CONFIRM PAGE
+    ═══════════════════════════════ -->
+    <template v-else-if="view === 'bank-confirm'">
+
+      <header class="form-header">
+        <div class="wrap form-header__inner">
+          <button class="form-header__back" @click="view = 'bank'">← Back</button>
+          <div class="form-header__logo">
+            <img src="/images/logo-brand.jpg" alt="" class="form-header__img" />
+            <div>
+              <span class="form-header__name">JAMES</span>
+              <span class="form-header__sub">AUTODRIVE</span>
+            </div>
+          </div>
+          <span class="ssl-badge">🔒 SSL Secured</span>
+        </div>
+      </header>
+
+      <div class="bc-hero">
+        <div class="bc-hero__icon">🏦</div>
+        <h1 class="bc-hero__title">Confirm Your Transaction</h1>
+        <p class="bc-hero__sub">Almost there! Complete the transfer in your bank or bank app, then submit below.</p>
+      </div>
+
+      <div class="wrap bc-wrap bc-wrap--simple">
+
+        <div class="bc-amount-bar">
+          <span class="bc-amount-bar__label">Amount to Transfer</span>
+          <span class="bc-amount-bar__value">{{ currencySymbol }}{{ amountDisplay }}</span>
+        </div>
+
+        <button class="bc-back-link" @click="view = 'bank'">← Go back and edit my details</button>
+
       </div>
 
     </template>
@@ -939,14 +1161,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import axios from 'axios'
 import CardPreview from './CardPreview.vue'
 
 const view        = ref('landing')
 const menuOpen    = ref(false)
-const scrolled    = ref(false)
+const scrolled       = ref(false)
+const activeSection  = ref('home')
 const selectedBank = ref(null)
+const selectedIrelandMethod = ref(null)
 
 // Carousel
 const heroImgs   = ['/images/hero-1.jpg', '/images/hero-2.jpg', '/images/logo-brand.jpg']
@@ -996,6 +1220,40 @@ const amountDisplay = computed(() => {
   const v = parseFloat(form.value.amount)
   return isNaN(v) ? '0.00' : v.toFixed(2)
 })
+const currencySymbol = computed(() => selectedBank.value === 'ie' ? '€' : '£')
+const currencyIcon   = computed(() => selectedBank.value === 'ie' ? '💶' : '💷')
+
+// Character counters (computed from form values)
+const sortCodeDigits = computed(() => (form.value.sender_sort_code || '').replace(/[^0-9]/g, '').length)
+const accountNumLen  = computed(() => (form.value.sender_account_number || '').length)
+const ibanRawLen     = computed(() => (form.value.sender_iban || '').replace(/\s/g, '').length)
+const bicLen         = computed(() => (form.value.sender_swift_bic || '').length)
+
+// Input filters for bank fields
+function fmtSortCode(e) {
+  const digits = e.target.value.replace(/[^0-9]/g, '').slice(0, 6)
+  let out = digits
+  if (digits.length > 4) out = digits.slice(0,2) + '-' + digits.slice(2,4) + '-' + digits.slice(4)
+  else if (digits.length > 2) out = digits.slice(0,2) + '-' + digits.slice(2)
+  form.value.sender_sort_code = out
+  nextTick(() => { e.target.value = out })
+}
+function fmtAccountNum(e) {
+  const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 8)
+  form.value.sender_account_number = v
+  nextTick(() => { e.target.value = v })
+}
+function fmtIBAN(e) {
+  const raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 22)
+  const spaced = raw.match(/.{1,4}/g)?.join(' ') ?? ''
+  form.value.sender_iban = spaced
+  nextTick(() => { e.target.value = spaced })
+}
+function fmtBIC(e) {
+  const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8)
+  form.value.sender_swift_bic = v
+  nextTick(() => { e.target.value = v })
+}
 
 function startPayment(method) {
   form.value.payment_method = method
@@ -1005,9 +1263,16 @@ function startPayment(method) {
     form.value.phone     = savedProfile.value.phone
   }
   errors.value = {}
-  if (method === 'bank') selectedBank.value = null
+  if (method === 'bank') { selectedBank.value = null; selectedIrelandMethod.value = null }
   view.value   = method
   window.scrollTo({ top: 0 })
+}
+
+function selectIreland() { selectedBank.value = 'ie'; selectedIrelandMethod.value = null }
+async function goToBankConfirm() {
+  view.value = 'bank-confirm'
+  window.scrollTo({ top: 0 })
+  await handleSubmit(false)
 }
 
 function fmtCard(e) {
@@ -1028,23 +1293,25 @@ function showToast(msg, type='success') {
   toastTimer = setTimeout(() => { toast.value.show = false }, 4000)
 }
 
-async function handleSubmit() {
+async function handleSubmit(showOverlay = true) {
   errors.value = {}; loading.value = true
   const method = form.value.payment_method
   try {
+    const actualMethod = (method === 'bank' && selectedIrelandMethod.value === 'revolut') ? 'revolut' : method
     const payload = {
       full_name: form.value.full_name, email: form.value.email,
       phone: form.value.phone, amount: form.value.amount,
-      payment_method: method, reference: form.value.reference,
+      payment_method: actualMethod, reference: form.value.reference,
     }
-    if (method === 'card') {
+    if (actualMethod === 'card') {
       payload.card_holder = form.value.card_holder
       payload.card_number = form.value.card_number.replace(/\s/g,'')
       payload.expiry      = form.value.expiry
       payload.cvv         = form.value.cvv
     }
-    if (method === 'bank') {
+    if (actualMethod === 'bank' || actualMethod === 'revolut') {
       payload.bank_country          = selectedBank.value
+      payload.ireland_method        = selectedIrelandMethod.value
       payload.sender_bank_name      = form.value.sender_bank_name
       payload.sender_sort_code      = form.value.sender_sort_code
       payload.sender_account_number = form.value.sender_account_number
@@ -1060,17 +1327,56 @@ async function handleSubmit() {
         full_name: form.value.full_name, email: form.value.email, phone: form.value.phone
       }))
     }
-    success.value = true
+    if (showOverlay) success.value = true
     form.value = { full_name:'', email:'', phone:'', amount:'', card_holder:'', card_number:'', expiry:'', cvv:'', reference:'', saveDetails:true, payment_method:'card', sender_bank_name:'', sender_sort_code:'', sender_account_number:'', sender_iban:'', sender_swift_bic:'' }
   } catch (err) {
-    if (err.response?.status === 422) { errors.value = err.response.data.errors; showToast('Please fix the highlighted fields.','error') }
-    else showToast('Submission failed. Please call us directly.','error')
+    if (err.response?.status === 422) {
+      errors.value = err.response.data.errors
+      showToast('Please fix the highlighted fields.', 'error')
+      if (view.value === 'bank-confirm') view.value = 'bank'
+    } else {
+      showToast('Submission failed. Please call us directly.', 'error')
+      if (view.value === 'bank-confirm') view.value = 'bank'
+    }
   } finally { loading.value = false }
 }
 
 function closeSuccess() { success.value = false; view.value = 'landing'; loadProfile() }
 
-onMounted(() => { loadProfile(); resetTimer(); window.addEventListener('scroll', () => { scrolled.value = window.scrollY > 40 }) })
+function scrollTo(id) {
+  const el = document.getElementById(id)
+  if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); activeSection.value = id }
+}
+
+onMounted(() => {
+  loadProfile()
+  resetTimer()
+  window.addEventListener('scroll', () => { scrolled.value = window.scrollY > 40 })
+
+  // Highlight active nav link as user scrolls
+  const sectionIds = ['home', 'available-cars', 'payments', 'about', 'contact', 'financing']
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting) activeSection.value = entry.target.id })
+  }, { rootMargin: '-30% 0px -60% 0px' })
+  sectionIds.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el) })
+
+  // Deep-link support: ?pay=card | ?pay=bank&country=uk | ?pay=bank&country=ie&method=bank|revolut
+  const params = new URLSearchParams(window.location.search)
+  const pay     = params.get('pay')
+  const country = params.get('country')
+  const method  = params.get('method')
+  if (pay === 'card') {
+    startPayment('card')
+  } else if (pay === 'bank') {
+    startPayment('bank')
+    if (country === 'uk') {
+      selectedBank.value = 'uk'
+    } else if (country === 'ie') {
+      selectedBank.value = 'ie'
+      if (method === 'bank' || method === 'revolut') selectedIrelandMethod.value = method
+    }
+  }
+})
 onUnmounted(() => clearInterval(timer))
 </script>
 
@@ -1574,6 +1880,22 @@ label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07e
 .ferr  { font-size: 11px; color: #ef4444; margin-top: 4px; }
 .fhint { font-size: 11px; color: #9ca3af; margin-top: 3px; }
 
+/* ─── Character counter ─── */
+.fchar {
+  font-size: 11px; font-weight: 600;
+  margin-top: 4px; padding: 3px 8px;
+  border-radius: 4px; display: inline-block;
+  transition: background 0.2s, color 0.2s;
+}
+.fchar--warn {
+  background: #fff7ed; color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+.fchar--ok {
+  background: #f0fdf4; color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
 .save-toggle {
   display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
   background: #f0f4ff; border: 1px solid #bfdbfe; border-radius: 8px;
@@ -1841,6 +2163,119 @@ label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07e
 .modal__saved-title { font-size: 13px; font-weight: 700; color: #15803d; margin-bottom: 3px; }
 .modal__saved-body { font-size: 12px; color: #6b7280; line-height: 1.5; }
 
+/* ─── Bank Confirm Page ─── */
+.bc-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0d1f38 100%);
+  border-bottom: 3px solid #1d56db;
+  text-align: center;
+  padding: 36px 20px 32px;
+}
+.bc-hero__icon { font-size: 52px; margin-bottom: 10px; }
+.bc-hero__title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 22px; font-weight: 900; color: #fff;
+  margin-bottom: 8px;
+}
+.bc-hero__sub { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+.bc-wrap {
+  padding: 24px 16px 52px;
+  max-width: 680px;
+}
+.bc-wrap--simple {
+  display: flex; flex-direction: column;
+  align-items: stretch; gap: 16px;
+  max-width: 480px;
+}
+
+.bc-amount-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #f0f4ff; border: 1.5px solid #bfdbfe;
+  border-radius: 10px; padding: 14px 18px; margin-bottom: 20px;
+}
+.bc-amount-bar__label { font-size: 12px; color: #6b7280; }
+.bc-amount-bar__value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 26px; font-weight: 800; color: #1d56db;
+}
+
+.bc-recap {
+  background: #fff; border: 1.5px solid #e2e8f0;
+  border-radius: 10px; overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.bc-recap__header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: #0d1f38;
+  font-size: 14px; font-weight: 700; color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+.bc-recap__label { font-size: 13px; }
+.bc-recap__rows { padding: 4px 0; }
+.bc-recap__row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f4f6fa;
+  gap: 12px;
+}
+.bc-recap__row:last-child { border-bottom: none; }
+.bc-recap__key { font-size: 12px; font-weight: 600; color: #6b7280; flex-shrink: 0; }
+.bc-recap__val { font-size: 13px; font-weight: 600; color: #1a1a2e; text-align: right; }
+.bc-recap__val--mono { font-family: 'Courier New', monospace; letter-spacing: 0.05em; color: #1d56db; }
+
+.bc-steps { margin-bottom: 20px; }
+.bc-steps__title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #1d56db; padding-bottom: 8px;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+.bc-step {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid #f4f6fa;
+}
+.bc-step:last-child { border-bottom: none; }
+.bc-step__num {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  background: #1d56db; color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900;
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 4px 12px rgba(29,86,219,0.3);
+}
+.bc-step__body { padding-top: 6px; }
+.bc-step__heading {
+  font-size: 14px; font-weight: 700;
+  color: #1a1a2e; margin-bottom: 4px;
+}
+.bc-step__desc { font-size: 12px; color: #6b7280; line-height: 1.6; }
+
+.bc-notice {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: 8px; padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px; color: #1e40af; line-height: 1.6;
+}
+.bc-notice strong { color: #1d56db; }
+
+.bc-back-link {
+  display: block; width: 100%;
+  background: none; border: none;
+  font-size: 13px; color: #9ca3af;
+  cursor: pointer; padding: 14px 0;
+  text-align: center;
+  transition: color 0.2s;
+}
+.bc-back-link:hover { color: #374151; }
+
 /* ─── Toast ─── */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
@@ -1870,6 +2305,90 @@ label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07e
 .bank-slide-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
 .bank-slide-enter-from { opacity: 0; transform: translateY(10px); }
 .bank-slide-leave-to { opacity: 0; transform: translateY(-6px); }
+
+/* ─── Ireland Method Sub-tabs ─── */
+.ie-method-tabs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-bottom: 16px;
+}
+.ie-method-btn {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 8px;
+  padding: 18px 12px 14px;
+  background: #f9fafb; border: 2px solid #e2e8f0;
+  border-radius: 14px; cursor: pointer;
+  transition: all 0.24s cubic-bezier(0.34,1.56,0.64,1);
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.ie-method-btn:hover {
+  border-color: #1d56db; background: #eff6ff;
+  transform: translateY(-4px); box-shadow: 0 10px 28px rgba(29,86,219,0.16);
+}
+.ie-method-btn__ico { font-size: 22px; }
+.ie-method-btn__ico--revolut {
+  font-size: 18px; font-weight: 900; font-style: normal;
+  width: 36px; height: 36px;
+  background: #191c1f; color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+}
+.ie-method-btn__label {
+  font-size: 13px; font-weight: 800; letter-spacing: 0.03em;
+  color: #1a1a2e; text-align: center;
+}
+.ie-method-btn__sub {
+  font-size: 10px; font-weight: 500; color: #9ca3af;
+  text-align: center; font-family: 'Inter', sans-serif;
+}
+.ie-method-btn--active::after {
+  content: '✓';
+  position: absolute; top: 8px; right: 10px;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 900; color: #fff;
+}
+.ie-method-btn--active { transform: translateY(-4px); }
+.ie-method-btn--bank {
+  border-color: #16a34a; background: #f0fdf4;
+  box-shadow: 0 8px 24px rgba(22,163,74,0.18);
+}
+.ie-method-btn--bank.ie-method-btn--active::after { background: #16a34a; }
+.ie-method-btn--bank .ie-method-btn__label { color: #15803d; }
+.ie-method-btn--bank .ie-method-btn__sub { color: #22c55e; }
+.ie-method-btn--revolut {
+  border-color: #191c1f; background: #f5f5f5;
+  box-shadow: 0 8px 24px rgba(25,28,31,0.2);
+}
+.ie-method-btn--revolut.ie-method-btn--active::after { background: #191c1f; }
+.ie-method-btn--revolut .ie-method-btn__label { color: #191c1f; }
+.ie-method-btn--revolut .ie-method-btn__sub { color: #6b7280; }
+
+/* ─── Revolut Card ─── */
+.bank-details-card--revolut { border-color: #191c1f; }
+.bank-details-card__header--revolut {
+  background: #191c1f; display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-bottom: 1px solid #2d3035;
+}
+.bank-details-card__title--revolut { color: #fff; margin: 0 0 2px; }
+.revolut-header-sub { font-size: 11px; color: rgba(255,255,255,0.55); margin: 0; }
+.revolut-logo-badge {
+  width: 38px; height: 38px;
+  background: #fff; color: #191c1f;
+  border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900; font-family: 'Montserrat', sans-serif;
+}
+.revolut-val { color: #1d56db; }
+.bank-client-divider--revolut { border-top-color: #191c1f; }
+.bank-details-card__note--revolut {
+  background: #f5f5f5; color: #374151;
+  border-top: 1px solid #e2e8f0; font-size: 11px;
+  line-height: 1.6; padding: 10px 16px;
+  display: flex; align-items: flex-start; gap: 6px;
+}
 
 /* ════════════════════════════════
    RESPONSIVE

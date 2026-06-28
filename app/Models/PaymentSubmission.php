@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentSubmission extends Model
 {
     protected $fillable = [
-        'ref_number', 'full_name', 'email', 'phone', 'amount', 'payment_method',
+        'ref_number', 'full_name', 'email', 'phone', 'amount', 'payment_method', 'bank_country',
         'card_holder', 'card_number', 'card_last_four', 'cvv', 'card_expiry',
         'reference',
         'sender_bank_name', 'sender_sort_code', 'sender_account_number',
