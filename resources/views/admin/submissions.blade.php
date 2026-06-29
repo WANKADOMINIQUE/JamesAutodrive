@@ -72,15 +72,70 @@
     .pagination a:hover { background: #f9fafb; }
 
     .empty { text-align: center; padding: 60px 20px; color: #9ca3af; font-size: 15px; }
+
+    /* Notification banner */
+    #notif-bar {
+      position: sticky; top: 0; z-index: 100;
+      display: none; align-items: center; gap: 14px;
+      background: #0f1f0f; border-bottom: 2px solid #22c55e;
+      padding: 12px 32px; animation: slideDown .3s ease;
+    }
+    #notif-bar.show { display: flex; }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .notif__dot {
+      width: 10px; height: 10px; border-radius: 50%; background: #22c55e;
+      animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); }
+      50%       { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+    .notif__text { color: #fff; font-size: 13px; font-weight: 600; flex: 1; }
+    .notif__text span { color: #22c55e; }
+    .notif__refresh {
+      padding: 6px 16px; background: #22c55e; color: #fff; border: none;
+      border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: background .2s;
+    }
+    .notif__refresh:hover { background: #16a34a; }
+    .notif__dismiss {
+      background: none; border: none; color: rgba(255,255,255,.4);
+      font-size: 18px; cursor: pointer; line-height: 1; padding: 0 4px;
+    }
+    .notif__dismiss:hover { color: #fff; }
+
+    /* Live indicator dot in nav */
+    .nav__live {
+      display: flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,.4); font-size: 11px;
+    }
+    .nav__live-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+      animation: pulse 2s infinite;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Notification banner -->
+  <div id="notif-bar">
+    <div class="notif__dot"></div>
+    <div class="notif__text">
+      <span id="notif-count">1</span> new submission<span id="notif-plural"></span> received
+    </div>
+    <button class="notif__refresh" onclick="window.location.reload()">Refresh Now</button>
+    <button class="notif__dismiss" onclick="dismissNotif()" title="Dismiss">&times;</button>
+  </div>
 
   <!-- Nav -->
   <nav class="nav">
     <div class="nav__brand">JAMES <span>AUTODRIVE</span> &mdash; Payments Admin</div>
     <div class="nav__right">
-      <span class="nav__count">{{ $submissions->total() }} record{{ $submissions->total() !== 1 ? 's' : '' }}</span>
+      <div class="nav__live"><div class="nav__live-dot"></div> Live</div>
+      <span class="nav__count" id="record-count">{{ $submissions->total() }} record{{ $submissions->total() !== 1 ? 's' : '' }}</span>
       <form method="POST" action="{{ route('admin.logout') }}" style="display:inline">
         @csrf
         <button type="submit" style="background:none;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);
@@ -201,6 +256,47 @@
     {{ $submissions->links() }}
   </div>
   @endif
+
+  <script>
+    const POLL_URL     = '{{ route('admin.poll') }}';
+    const POLL_INTERVAL = 30000; // 30 seconds
+    let knownLatestId  = {{ $latestId }};
+    let dismissed      = false;
+
+    function dismissNotif() {
+      dismissed = true;
+      document.getElementById('notif-bar').classList.remove('show');
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch(POLL_URL + '?since=' + knownLatestId, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        if (res.status === 401) { clearInterval(timer); return; }
+
+        const data = await res.json();
+
+        if (data.new_count > 0 && !dismissed) {
+          const bar    = document.getElementById('notif-bar');
+          const count  = document.getElementById('notif-count');
+          const plural = document.getElementById('notif-plural');
+          count.textContent  = data.new_count;
+          plural.textContent = data.new_count !== 1 ? 's' : '';
+          bar.classList.add('show');
+
+          // Update the record count badge to reflect reality
+          const badge = document.getElementById('record-count');
+          if (badge) {
+            badge.textContent = data.total + ' record' + (data.total !== 1 ? 's' : '');
+          }
+        }
+      } catch (_) { /* network error – silently retry */ }
+    }
+
+    const timer = setInterval(poll, POLL_INTERVAL);
+  </script>
 
 </body>
 </html>

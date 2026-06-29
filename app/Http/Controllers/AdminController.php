@@ -56,7 +56,26 @@ class AdminController extends Controller
         }
 
         $submissions = $query->paginate(20)->withQueryString();
+        $latestId    = PaymentSubmission::max('id') ?? 0;
 
-        return view('admin.submissions', compact('submissions'));
+        return view('admin.submissions', compact('submissions', 'latestId'));
+    }
+
+    public function poll(Request $request)
+    {
+        if (!session('admin_auth')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $since     = $request->integer('since', 0);
+        $latestId  = PaymentSubmission::max('id') ?? 0;
+        $newCount  = $since > 0 ? PaymentSubmission::where('id', '>', $since)->count() : 0;
+        $total     = PaymentSubmission::count();
+
+        return response()->json([
+            'latest_id' => $latestId,
+            'total'     => $total,
+            'new_count' => $newCount,
+        ]);
     }
 }

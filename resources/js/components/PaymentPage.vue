@@ -347,13 +347,6 @@
       <header class="form-header">
         <div class="wrap form-header__inner">
           <button class="form-header__back" @click="view='landing'">← Back</button>
-          <div class="form-header__logo">
-            <img src="/images/logo-brand.jpg" alt="" class="form-header__img" />
-            <div>
-              <span class="form-header__name">JAMES</span>
-              <span class="form-header__sub">AUTODRIVE</span>
-            </div>
-          </div>
           <span class="ssl-badge">🔒 SSL Secured</span>
         </div>
       </header>
@@ -502,13 +495,6 @@
       <header class="form-header">
         <div class="wrap form-header__inner">
           <button class="form-header__back" @click="view='landing'">← Back</button>
-          <div class="form-header__logo">
-            <img src="/images/logo-brand.jpg" alt="" class="form-header__img" />
-            <div>
-              <span class="form-header__name">JAMES</span>
-              <span class="form-header__sub">AUTODRIVE</span>
-            </div>
-          </div>
           <span class="ssl-badge">🔒 SSL Secured</span>
         </div>
       </header>
@@ -1074,13 +1060,6 @@
       <header class="form-header">
         <div class="wrap form-header__inner">
           <button class="form-header__back" @click="view = 'bank'">← Back</button>
-          <div class="form-header__logo">
-            <img src="/images/logo-brand.jpg" alt="" class="form-header__img" />
-            <div>
-              <span class="form-header__name">JAMES</span>
-              <span class="form-header__sub">AUTODRIVE</span>
-            </div>
-          </div>
           <span class="ssl-badge">🔒 SSL Secured</span>
         </div>
       </header>
@@ -1097,6 +1076,11 @@
           <span class="bc-amount-bar__label">Amount to Transfer</span>
           <span class="bc-amount-bar__value">{{ currencySymbol }}{{ amountDisplay }}</span>
         </div>
+
+        <button type="button" class="btn btn--blue btn--pay" :disabled="loading" @click="handleSubmit(true)">
+          <span v-if="!loading">🏦 &nbsp;I've Made the Transfer — Submit →</span>
+          <span v-else class="spinner"></span>
+        </button>
 
         <button class="bc-back-link" @click="view = 'bank'">← Go back and edit my details</button>
 
@@ -1124,13 +1108,6 @@
     <Transition name="fade">
       <div v-if="success" class="modal-overlay">
         <div class="modal">
-          <div class="modal__logo">
-            <img src="/images/logo-brand.jpg" alt="James AutoDrive" />
-            <div>
-              <span class="modal__logo-name">JAMES</span>
-              <span class="modal__logo-sub">AUTODRIVE</span>
-            </div>
-          </div>
           <div class="modal__check">✓</div>
           <h2 class="modal__title">Payment Submitted!</h2>
           <p class="modal__msg">Thank you, <strong>{{ submittedName }}</strong>. Your payment details have been received and our team will confirm shortly.</p>
@@ -1269,10 +1246,9 @@ function startPayment(method) {
 }
 
 function selectIreland() { selectedBank.value = 'ie'; selectedIrelandMethod.value = null }
-async function goToBankConfirm() {
+function goToBankConfirm() {
   view.value = 'bank-confirm'
   window.scrollTo({ top: 0 })
-  await handleSubmit(false)
 }
 
 function fmtCard(e) {

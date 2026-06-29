@@ -9,6 +9,7 @@ Route::prefix('admin')->group(function () {
     Route::post('login', [AdminController::class, 'login'])->name('admin.login.post');
     Route::post('logout',[AdminController::class, 'logout'])->name('admin.logout');
     Route::get('submissions', [AdminController::class, 'submissions'])->name('admin.submissions');
+    Route::get('poll',        [AdminController::class, 'poll'])->name('admin.poll');
 });
 
 // Serve the Vue SPA for all other routes
